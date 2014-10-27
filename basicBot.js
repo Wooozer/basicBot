@@ -1579,6 +1579,48 @@
                     }
                 }
             },
+			
+			
+            bongCommand: {
+                command: 'bong',
+                rank: 'user',
+                type: 'startsWith',
+                bongs: ['has given you the bong and you take a bong hit like a man!',
+                    'has given you the bong and you sip the bong water!',
+                    'has passed the bong to you',
+                    'has given you the bong and you take a bong hit and coughs.'
+                ],
+                getBong: function () {
+                    var c = Math.floor(Math.random() * this.bongs.length);
+                    return this.bongs[b];
+                },
+                functionality: function (chat, cmd) {
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                    if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                    else {
+                        var msg = chat.message;
+
+                        var space = msg.indexOf(' ');
+                        if (space === -1) {
+                            API.sendChat(basicBot.chat.hitbong);
+                            return false;
+                        }
+                        else {
+                            var name = msg.substring(space + 2);
+                            var user = basicBot.userUtilities.lookupUserName(name);
+                            if (user === false || !user.inRoom) {
+                                return API.sendChat(subChat(basicBot.chat.nouserbong, {name: name}));
+                            }
+                            else if (user.username === chat.un) {
+                                return API.sendChat(subChat(basicBot.chat.selfbong, {name: name}));
+                            }
+                            else {
+                                return API.sendChat(subChat(basicBot.chat.bong, {nameto: user.username, namefrom: chat.un, bong: this.getBong()}));
+                            }
+                        }
+                    }
+                }
+            },
 
             cycleCommand: {
                 command: 'cycle',
